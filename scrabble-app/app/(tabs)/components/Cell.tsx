@@ -1,6 +1,16 @@
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 
 export default function Cell({ letter, onPress }) {
+// const getColor = (multiplier) => {
+//   switch (multiplier) {
+//     case 'TW': return '#ff4d4d';
+//     case 'DW': return '#ff9999';
+//     case 'TL': return '#4da6ff';
+//     case 'DL': return '#99ccff';
+//     default: return '#eee';
+//   }
+// };
+
   return (
     <TouchableOpacity onPress={onPress}>
       <View style={styles.cell}>

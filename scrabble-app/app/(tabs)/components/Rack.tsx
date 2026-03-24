@@ -1,12 +1,13 @@
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 
 export default function Rack({ rack, onSelect }) {
+    
   return (
     <View style={styles.rack}>
-      {rack.map((letter, i) => (
-        <TouchableOpacity key={i} onPress={() => onSelect(letter, i)}>
+      {rack.map((tile, i) => (
+        <TouchableOpacity key={i} onPress={() => onSelect(tile, i)}>
           <View style={styles.tile}>
-            <Text>{letter}</Text>
+            <Text>{tile.letter}</Text>
           </View>
         </TouchableOpacity>
       ))}

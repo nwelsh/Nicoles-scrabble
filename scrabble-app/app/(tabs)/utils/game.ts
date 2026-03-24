@@ -6,9 +6,52 @@ export const LETTER_SCORES: Record<string, number> = {
   U: 1, V: 4, W: 4, X: 8, Y: 4, Z: 10
 };
 
-export const scoreWord = (word: string) => {
-  return word
-    .toUpperCase()
-    .split('')
-    .reduce((sum, l) => sum + (LETTER_SCORES[l] || 0), 0);
+export const TILE_DISTRIBUTION = [
+  { letter: 'A', count: 9, value: 1 },
+  { letter: 'B', count: 2, value: 3 },
+  { letter: 'C', count: 2, value: 3 },
+  { letter: 'D', count: 4, value: 2 },
+  { letter: 'E', count: 12, value: 1 },
+  { letter: 'F', count: 2, value: 4 },
+  { letter: 'G', count: 3, value: 2 },
+  { letter: 'H', count: 2, value: 4 },
+  { letter: 'I', count: 9, value: 1 },
+  { letter: 'J', count: 1, value: 8 },
+  { letter: 'K', count: 1, value: 5 },
+  { letter: 'L', count: 4, value: 1 },
+  { letter: 'M', count: 2, value: 3 },
+  { letter: 'N', count: 6, value: 1 },
+  { letter: 'O', count: 8, value: 1 },
+  { letter: 'P', count: 2, value: 3 },
+  { letter: 'Q', count: 1, value: 10 },
+  { letter: 'R', count: 6, value: 1 },
+  { letter: 'S', count: 4, value: 1 },
+  { letter: 'T', count: 6, value: 1 },
+  { letter: 'U', count: 4, value: 1 },
+  { letter: 'V', count: 2, value: 4 },
+  { letter: 'W', count: 2, value: 4 },
+  { letter: 'X', count: 1, value: 8 },
+  { letter: 'Y', count: 2, value: 4 },
+  { letter: 'Z', count: 1, value: 10 },
+];
+
+export const scoreWordWithMultipliers = (tiles, board) => {
+  let total = 0;
+  let wordMultiplier = 1;
+
+  tiles.forEach(({ row, col, letter }) => {
+    const cell = board[row][col];
+    const base = LETTER_SCORES[letter] || 0;
+
+    if (cell.multiplier === 'DL') total += base * 2;
+    else if (cell.multiplier === 'TL') total += base * 3;
+    else {
+      total += base;
+    }
+
+    if (cell.multiplier === 'DW') wordMultiplier *= 2;
+    if (cell.multiplier === 'TW') wordMultiplier *= 3;
+  });
+
+  return total * wordMultiplier;
 };
