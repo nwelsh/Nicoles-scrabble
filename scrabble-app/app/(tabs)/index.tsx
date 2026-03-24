@@ -9,7 +9,7 @@ import { createTileBag, drawTiles } from "./components/Bag";
 const BOARD_SIZE = 15;
 const LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
-
+// TODO: add the current letters 
 
 const createBoard = () =>
   Array.from({ length: 15 }, (_, row) =>
@@ -73,6 +73,33 @@ export default function HomeScreen() {
     setSelected(null);
   };
 
+const clearTurn = () => {
+  // remove all placed tiles from board
+  setBoard(prev =>
+    prev.map((row, r) =>
+      row.map((cell, c) => {
+        const wasPlaced = placedTiles.find(
+          t => t.row === r && t.col === c
+        );
+
+        return wasPlaced ? { ...cell, letter: '' } : cell;
+      })
+    )
+  );
+
+  // return all tiles to rack
+  setGameState(prev => ({
+    ...prev,
+    rack: [
+      ...prev.rack,
+      ...placedTiles.map(t => ({ letter: t.letter, value: 0 })),
+    ],
+  }));
+
+  // reset
+  setPlacedTiles([]);
+};
+
   const getPlacedWord = () => {
     if (placedTiles.length === 0) return "";
 
@@ -104,6 +131,31 @@ export default function HomeScreen() {
     });
   };
 
+  const undoLastTile = () => {
+  if (placedTiles.length === 0) return;
+
+  const last = placedTiles[placedTiles.length - 1];
+
+  // remove from board
+  setBoard(prev =>
+    prev.map((row, r) =>
+      row.map((cell, c) =>
+        r === last.row && c === last.col
+          ? { ...cell, letter: '' }
+          : cell
+      )
+    )
+  );
+
+  // return tile to rack
+  setGameState(prev => ({
+    ...prev,
+    rack: [...prev.rack, { letter: last.letter, value: 0 }],
+  }));
+
+  // remove from placedTiles
+  setPlacedTiles(prev => prev.slice(0, -1));
+};
  
 
   const submitWord = async () => {
@@ -152,6 +204,8 @@ export default function HomeScreen() {
       />
 
       <Button title="Submit Word" onPress={submitWord} />
+      <Button title="Undo" onPress={undoLastTile} />
+<Button title="Clear" onPress={clearTurn} />
     </View>
   );
 }
