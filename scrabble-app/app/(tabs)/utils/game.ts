@@ -55,3 +55,22 @@ export const scoreWordWithMultipliers = (tiles, board) => {
 
   return total * wordMultiplier;
 };
+
+export const getMultiplier = (row: number, col: number) => {
+  if (row === 7 && col === 7) return 'DW'; 
+
+  if (
+    (row === 0 && col === 0) ||
+    (row === 7 && col === 0) ||
+    (row === 0 && col === 14) ||
+    (row === 7 && col === 14) ||
+    (row === 14 && col === 0) ||
+    (row === 0 && col === 7) ||
+    (row === 14 && col === 14) ||
+    (row === 14 && col === 7) 
+  ) return 'TW';
+
+  if ((row === col) || (row + col === 14)) return 'DL';
+
+  return undefined;
+};

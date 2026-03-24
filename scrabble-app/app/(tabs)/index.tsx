@@ -2,27 +2,14 @@ import { useState } from "react";
 import { View, Button, Text } from "react-native";
 import Board from "./components/Board";
 import Rack from "./components/Rack";
-import { scoreWordWithMultipliers } from "./utils/game";
+import { scoreWordWithMultipliers, getMultiplier } from "./utils/game";
 import { StyleSheet } from "react-native";
 import { createTileBag, drawTiles } from "./components/Bag";
 
 const BOARD_SIZE = 15;
 const LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
-const getMultiplier = (row: number, col: number) => {
-  if (row === 7 && col === 7) return 'DW'; // center
 
-  if (
-    (row === 0 && col === 0) ||
-    (row === 0 && col === 14) ||
-    (row === 14 && col === 0) ||
-    (row === 14 && col === 14)
-  ) return 'TW';
-
-  if ((row === col) || (row + col === 14)) return 'DL';
-
-  return undefined;
-};
 
 const createBoard = () =>
   Array.from({ length: 15 }, (_, row) =>
