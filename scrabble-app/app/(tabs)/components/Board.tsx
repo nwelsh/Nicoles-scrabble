@@ -7,21 +7,7 @@ type Cell = {
 };
 
 export default function Board({ board, onCellPress }) {
-  const getMultiplier = (row: number, col: number) => {
-    if (row === 7 && col === 7) return "DW"; // center
-
-    if (
-      (row === 0 && col === 0) ||
-      (row === 0 && col === 14) ||
-      (row === 14 && col === 0) ||
-      (row === 14 && col === 14)
-    )
-      return "TW";
-
-    if (row === col || row + col === 14) return "DL";
-
-    return undefined;
-  };
+  
 
   return (
     <View style={styles.board}>

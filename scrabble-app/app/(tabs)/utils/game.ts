@@ -6,6 +6,25 @@ export const LETTER_SCORES: Record<string, number> = {
   U: 1, V: 4, W: 4, X: 8, Y: 4, Z: 10
 };
 
+const BOARD_LAYOUT: (null | 'DL' | 'TL' | 'DW' | 'TW')[][] = [
+  ['TW', null, null, 'DL', null, null, null, 'TW', null, null, null, 'DL', null, null, 'TW'],
+  [null, 'DW', null, null, null, 'TL', null, null, null, 'TL', null, null, null, 'DW', null],
+  [null, null, 'DW', null, null, null, 'DL', null, 'DL', null, null, null, 'DW', null, null],
+  ['DL', null, null, 'DW', null, null, null, 'DL', null, null, null, 'DW', null, null, 'DL'],
+  [null, null, null, null, 'DW', null, null, null, null, null, 'DW', null, null, null, null],
+  [null, 'TL', null, null, null, 'TL', null, null, null, 'TL', null, null, null, 'TL', null],
+  [null, null, 'DL', null, null, null, 'DL', null, 'DL', null, null, null, 'DL', null, null],
+  ['TW', null, null, 'DL', null, null, null, 'DW', null, null, null, 'DL', null, null, 'TW'],
+  [null, null, 'DL', null, null, null, 'DL', null, 'DL', null, null, null, 'DL', null, null],
+  [null, 'TL', null, null, null, 'TL', null, null, null, 'TL', null, null, null, 'TL', null],
+  [null, null, null, null, 'DW', null, null, null, null, null, 'DW', null, null, null, null],
+  ['DL', null, null, 'DW', null, null, null, 'DL', null, null, null, 'DW', null, null, 'DL'],
+  [null, null, 'DW', null, null, null, 'DL', null, 'DL', null, null, null, 'DW', null, null],
+  [null, 'DW', null, null, null, 'TL', null, null, null, 'TL', null, null, null, 'DW', null],
+  ['TW', null, null, 'DL', null, null, null, 'TW', null, null, null, 'DL', null, null, 'TW'],
+];
+  
+
 export const TILE_DISTRIBUTION = [
   { letter: 'A', count: 9, value: 1 },
   { letter: 'B', count: 2, value: 3 },
@@ -57,20 +76,5 @@ export const scoreWordWithMultipliers = (tiles, board) => {
 };
 
 export const getMultiplier = (row: number, col: number) => {
-  if (row === 7 && col === 7) return 'DW'; 
-
-  if (
-    (row === 0 && col === 0) ||
-    (row === 7 && col === 0) ||
-    (row === 0 && col === 14) ||
-    (row === 7 && col === 14) ||
-    (row === 14 && col === 0) ||
-    (row === 0 && col === 7) ||
-    (row === 14 && col === 14) ||
-    (row === 14 && col === 7) 
-  ) return 'TW';
-
-  if ((row === col) || (row + col === 14)) return 'DL';
-
-  return undefined;
+  return BOARD_LAYOUT[row][col];
 };
