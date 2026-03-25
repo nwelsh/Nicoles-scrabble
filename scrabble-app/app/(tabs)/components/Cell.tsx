@@ -18,9 +18,9 @@ export default function Cell({
       case "DW":
         return "#ff9999";
       case "TL":
-        return "#023770";
+        return "#ff23a4";
       case "DL":
-        return "#99ccff";
+        return "#edb4d6";
       default:
         return "#eee";
     }
