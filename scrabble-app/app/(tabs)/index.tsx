@@ -16,10 +16,17 @@ const LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 // Valid words
 // multiplayer
 
+type WordTile = {
+  row: number;
+  col: number;
+  letter: string;
+};
+
 const createBoard = () =>
   Array.from({ length: 15 }, (_, row) =>
     Array.from({ length: 15 }, (_, col) => ({
       letter: "",
+      value: 0,
       multiplier: getMultiplier(row, col),
     }))
   );
@@ -42,6 +49,8 @@ export default function HomeScreen() {
   const [placedTiles, setPlacedTiles] = useState<
     { row: number; col: number; letter: string }[]
   >([]);
+  const [isValidMove, setIsValidMove] = useState(false);
+  const [currentWordTiles, setCurrentWordTiles] = useState<WordTile[]>([]);
 
   const handleCellPress = (row: number, col: number) => {
     if (!selected) return;
@@ -49,7 +58,11 @@ export default function HomeScreen() {
     const newBoard = [...board];
 
     // ✅ FIX: use selected.tile.letter
-    newBoard[row][col].letter = selected.tile.letter;
+    newBoard[row][col] = {
+      ...newBoard[row][col],
+      letter: selected.tile.letter,
+      value: selected.tile.value,
+    };
 
     setBoard(newBoard);
 
@@ -60,6 +73,8 @@ export default function HomeScreen() {
         row,
         col,
         letter: selected.tile.letter,
+        value: selected.tile.value,
+        tile: selected.tile,
       },
     ]);
 
@@ -101,7 +116,7 @@ export default function HomeScreen() {
     const allWords = [main, ...crosses];
 
     const total = allWords.reduce(
-      (sum, w) => sum + scoreWordWithMultipliers(w.tiles, board),
+      (sum, w) => sum + scoreWordWithMultipliers(w.tiles, board, placedTiles),
       0
     );
 
@@ -128,6 +143,36 @@ export default function HomeScreen() {
     });
 
     return words;
+  };
+
+  const validatePlacement = (board, placedTiles) => {
+    if (placedTiles.length === 0) {
+      return "Place at least one tile";
+    }
+
+    const direction = getDirection(placedTiles);
+
+    if (!direction) {
+      return "Tiles must be in a straight line";
+    }
+
+    const firstMove = isFirstMove(board, placedTiles);
+
+    if (firstMove) {
+      if (!coversCenter(placedTiles)) {
+        return "First word must cover center";
+      }
+    } else {
+      if (!isConnected(board, placedTiles)) {
+        return "Word must connect to existing tiles";
+      }
+    }
+
+    if (!hasNoGaps(board, placedTiles, direction)) {
+      return "No gaps allowed in word";
+    }
+
+    return null;
   };
 
   const getDirection = (tiles) => {
@@ -184,6 +229,53 @@ export default function HomeScreen() {
 
     return { word, tiles };
   };
+
+  const checkMoveValidity = async () => {
+    if (placedTiles.length === 0) {
+      setIsValidMove(false);
+      return;
+    }
+
+    const placementError = validatePlacement(board, placedTiles);
+
+    if (placementError) {
+      setIsValidMove(false);
+      return;
+    }
+
+    const direction = getDirection(placedTiles);
+
+    if (!direction) {
+      setCurrentWordTiles([]);
+      return;
+    }
+
+    const main = getMainWord(board, placedTiles);
+
+    setCurrentWordTiles(main?.tiles || []);
+    const crosses = getCrossWords(board, placedTiles, direction);
+
+    const allWords = [main, ...crosses];
+
+    try {
+      const results = await Promise.all(
+        allWords.map((w) =>
+          fetch(`${BASE_URL}/validate?word=${w.word}`).then((res) => res.json())
+        )
+      );
+
+      const allValid = results.every((r) => r.valid);
+
+      setIsValidMove(allValid);
+    } catch (err) {
+      console.error(err);
+      setIsValidMove(false);
+    }
+  };
+
+  useEffect(() => {
+    checkMoveValidity();
+  }, [placedTiles, board]);
 
   const clearTurn = () => {
     // remove all placed tiles from board
@@ -264,15 +356,84 @@ export default function HomeScreen() {
     // remove from placedTiles
     setPlacedTiles((prev) => prev.slice(0, -1));
   };
+  const isFirstMove = (board, placedTiles = []) => {
+    return board.every((row, r) =>
+      row.every((cell, c) => {
+        const isNewTile = placedTiles.some((t) => t.row === r && t.col === c);
+
+        return isNewTile || !cell.letter;
+      })
+    );
+  };
+
+  const coversCenter = (placedTiles) => {
+    return placedTiles.some((t) => t.row === 7 && t.col === 7);
+  };
+
+  const direction = getDirection(placedTiles);
+
+  if (!direction) {
+    return "Tiles must be in a straight line";
+  }
+
+  const hasNoGaps = (board, placedTiles, direction) => {
+    const sorted = [...placedTiles].sort((a, b) =>
+      direction === "horizontal" ? a.col - b.col : a.row - b.row
+    );
+
+    const start = sorted[0];
+    const end = sorted[sorted.length - 1];
+
+    if (direction === "horizontal") {
+      for (let c = start.col; c <= end.col; c++) {
+        if (!board[start.row][c].letter) {
+          return false;
+        }
+      }
+    } else {
+      for (let r = start.row; r <= end.row; r++) {
+        if (!board[r][start.col].letter) {
+          return false;
+        }
+      }
+    }
+
+    return true;
+  };
+
+  const isConnected = (board, placedTiles) => {
+    return placedTiles.some(({ row, col }) => {
+      const neighbors = [
+        [row - 1, col],
+        [row + 1, col],
+        [row, col - 1],
+        [row, col + 1],
+      ];
+
+      return neighbors.some(([r, c]) => {
+        return (
+          r >= 0 &&
+          r < 15 &&
+          c >= 0 &&
+          c < 15 &&
+          board[r][c].letter &&
+          !placedTiles.some((t) => t.row === r && t.col === c)
+        );
+      });
+    });
+  };
+
+  
 
   const submitWord = async () => {
-    if (placedTiles.length === 0) return;
+    const error = validatePlacement(board, placedTiles);
 
-    const direction = getDirection(placedTiles);
-    if (!direction) {
-      alert("Tiles must be in a straight line");
+    if (error) {
+      alert(error);
       return;
     }
+
+    const direction = getDirection(placedTiles);
 
     const main = getMainWord(board, placedTiles);
     const crosses = getCrossWords(board, placedTiles, direction);
@@ -280,23 +441,19 @@ export default function HomeScreen() {
     const allWords = [main, ...crosses];
 
     try {
-      // validate all words
       const results = await Promise.all(
         allWords.map((w) =>
           fetch(`${BASE_URL}/validate?word=${w.word}`).then((res) => res.json())
         )
       );
 
-      const allValid = results.every((r) => r.valid);
-
-      if (!allValid) {
-        alert("Invalid word detected");
+      if (!results.every((r) => r.valid)) {
+        alert("Invalid word");
         return;
       }
 
-      // ✅ scoring
       const totalScore = allWords.reduce(
-        (sum, w) => sum + scoreWordWithMultipliers(w.tiles, board),
+        (sum, w) => sum + scoreWordWithMultipliers(w.tiles, board, placedTiles),
         0
       );
 
@@ -316,7 +473,13 @@ export default function HomeScreen() {
     <View style={styles.main}>
       <Text>Score: {score}</Text>
 
-      <Board board={board} onCellPress={handleCellPress} />
+      <Board
+        board={board}
+        placedTiles={placedTiles}
+        isValidMove={isValidMove}
+        currentWordTiles={currentWordTiles}
+        onCellPress={handleCellPress}
+      />
       <Rack
         rack={gameState.rack}
         onSelect={(tile, index) => setSelected({ tile, index })}

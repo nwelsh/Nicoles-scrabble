@@ -3,12 +3,17 @@ import Cell from "./Cell";
 
 type Cell = {
   letter: string;
-  multiplier?: "DL" | "TL" | "DW" | "TW";
+  value?: number;
+  multiplier?: 'DL' | 'TL' | 'DW' | 'TW';
 };
 
-export default function Board({ board, onCellPress }) {
-  
-
+export default function Board({
+  board,
+  onCellPress,
+  isValidMove,
+  placedTiles,
+  currentWordTiles,
+}) {
   return (
     <View style={styles.board}>
       {board.map((row, r) => (
@@ -17,7 +22,15 @@ export default function Board({ board, onCellPress }) {
             <Cell
               key={c}
               letter={cell.letter}
-              multiplier={cell.multiplier}
+  value={cell.value}
+  multiplier={cell.multiplier}
+              isInWord={currentWordTiles.some(
+                (t) => t.row === r && t.col === c
+              )}
+              isValidMove={isValidMove}
+              wordTiles={currentWordTiles}
+              row={r}
+              col={c}
               onPress={() => onCellPress(r, c)}
             />
           ))}

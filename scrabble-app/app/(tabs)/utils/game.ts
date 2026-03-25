@@ -54,22 +54,33 @@ export const TILE_DISTRIBUTION = [
   { letter: 'Z', count: 1, value: 10 },
 ];
 
-export const scoreWordWithMultipliers = (tiles, board) => {
+export const scoreWordWithMultipliers = (
+  tiles,
+  board,
+  placedTiles
+) => {
   let total = 0;
   let wordMultiplier = 1;
+
+  const isPlaced = (row, col) =>
+    placedTiles.some(t => t.row === row && t.col === col);
 
   tiles.forEach(({ row, col, letter }) => {
     const cell = board[row][col];
     const base = LETTER_SCORES[letter] || 0;
 
-    if (cell.multiplier === 'DL') total += base * 2;
-    else if (cell.multiplier === 'TL') total += base * 3;
-    else {
+    if (isPlaced(row, col)) {
+      // ✅ apply multipliers ONLY for new tiles
+      if (cell.multiplier === 'DL') total += base * 2;
+      else if (cell.multiplier === 'TL') total += base * 3;
+      else total += base;
+
+      if (cell.multiplier === 'DW') wordMultiplier *= 2;
+      if (cell.multiplier === 'TW') wordMultiplier *= 3;
+    } else {
+      // ❌ old tiles → no multiplier
       total += base;
     }
-
-    if (cell.multiplier === 'DW') wordMultiplier *= 2;
-    if (cell.multiplier === 'TW') wordMultiplier *= 3;
   });
 
   return total * wordMultiplier;

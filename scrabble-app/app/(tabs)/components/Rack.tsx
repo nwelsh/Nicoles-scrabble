@@ -7,8 +7,9 @@ export default function Rack({ rack, onSelect }) {
       {rack.map((tile, i) => (
         <TouchableOpacity key={i} onPress={() => onSelect(tile, i)}>
           <View style={styles.tile}>
-            <Text>{tile.letter}</Text>
-          </View>
+  <Text style={styles.letter}>{tile.letter}</Text>
+  <Text style={styles.value}>{tile.value}</Text>
+</View>
         </TouchableOpacity>
       ))}
     </View>
@@ -28,5 +29,15 @@ const styles = StyleSheet.create({
     margin: 4,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  letter: {
+    fontSize: 12,
+    fontWeight: 'bold',
+  },
+  value: {
+    position: 'absolute',
+    bottom: 1,
+    right: 2,
+    fontSize: 10,
   },
 });
