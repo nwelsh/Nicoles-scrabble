@@ -51,10 +51,10 @@ export default function Cell({
       };
     } else {
       borderStyle = {
-        borderLeftWidth: 2,
-        borderRightWidth: 2,
-        borderTopWidth: isFirst ? 2 : 0,
-        borderBottomWidth: isLast ? 2 : 0,
+        borderLeftWidth: 5,
+        borderRightWidth: 5,
+        borderTopWidth: isFirst ? 5 : 0,
+        borderBottomWidth: isLast ? 5 : 0,
         borderColor,
       };
     }

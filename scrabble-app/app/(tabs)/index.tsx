@@ -12,9 +12,8 @@ const LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
 // Alerts
 // place letter over letters
-// only let the multipliers work once
-// Valid words
 // multiplayer
+// fix UI
 
 type WordTile = {
   row: number;
