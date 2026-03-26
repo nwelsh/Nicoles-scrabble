@@ -4,7 +4,7 @@ import Cell from "./Cell";
 type Cell = {
   letter: string;
   value?: number;
-  multiplier?: 'DL' | 'TL' | 'DW' | 'TW';
+  multiplier?: "DL" | "TL" | "DW" | "TW";
 };
 
 export default function Board({
@@ -22,8 +22,8 @@ export default function Board({
             <Cell
               key={c}
               letter={cell.letter}
-  value={cell.value}
-  multiplier={cell.multiplier}
+              value={cell.value}
+              multiplier={cell.multiplier}
               isInWord={currentWordTiles.some(
                 (t) => t.row === r && t.col === c
               )}
@@ -57,6 +57,6 @@ export const getMultiplier = (row: number, col: number) => {
 };
 
 const styles = StyleSheet.create({
-  board: { alignSelf: "center", marginTop: 40 },
+  board: { alignSelf: "center", marginTop: 40, backgroundColor: "#000000" },
   row: { flexDirection: "row" },
 });

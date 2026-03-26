@@ -14,6 +14,8 @@ const LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 // place letter over letters
 // multiplayer
 // fix UI
+// At least 2 letters need ot be placed
+// multiple way words
 
 type WordTile = {
   row: number;
@@ -422,8 +424,6 @@ export default function HomeScreen() {
     });
   };
 
-  
-
   const submitWord = async () => {
     const error = validatePlacement(board, placedTiles);
 
@@ -461,7 +461,7 @@ export default function HomeScreen() {
       refillRack();
       setPlacedTiles([]);
 
-      alert(`✅ +${totalScore}`);
+      alert(`+${totalScore}`);
     } catch (err) {
       console.error(err);
       alert("Network error");
@@ -470,7 +470,7 @@ export default function HomeScreen() {
 
   return (
     <View style={styles.main}>
-      <Text>Score: {score}</Text>
+      <Text style={styles.score}>Total score: {score}</Text>
 
       <Board
         board={board}
@@ -483,15 +483,44 @@ export default function HomeScreen() {
         rack={gameState.rack}
         onSelect={(tile, index) => setSelected({ tile, index })}
       />
-
-      <Text style={{ textAlign: "center", marginTop: 10 }}>
-        Preview: {previewScore} pts
-      </Text>
-      <Button title="Submit Word" onPress={submitWord} />
-      <Button title="Undo" onPress={undoLastTile} />
-      <Button title="Clear" onPress={clearTurn} />
+      {previewScore > 0 && (
+        <Text style={{ textAlign: "center", marginTop: 10 }}>
+          {previewScore} pts
+        </Text>
+      )}
+      <View style={styles.buttonsContainer}>
+        <View style={styles.filledButton}>
+          <Button title="Submit Word" onPress={submitWord} color={"#FFF"} />
+        </View>
+        <View style={styles.button}>
+          <Button title="Undo" onPress={undoLastTile} color={"#ae00b4"} />
+        </View>
+        <View style={styles.button}>
+          <Button title="Clear" onPress={clearTurn} color={"#ae00b4"} />
+        </View>
+      </View>
     </View>
   );
 }
 
-const styles = StyleSheet.create({ main: { marginTop: 150 } });
+const styles = StyleSheet.create({
+  main: { marginTop: 150 },
+  buttonsContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    marginTop: 20,
+    gap: 10,
+  },
+  score: { textAlign: "center", fontSize: 18, fontWeight: "bold" },
+  button: {
+    borderWidth: 1,
+    borderColor: "#ae00b4",
+    borderRadius: 24,
+    color: "white",
+  },
+  filledButton: {
+    backgroundColor: "#ae00b4",
+    borderRadius: 24,
+    paddingHorizontal: 10,
+  },
+});

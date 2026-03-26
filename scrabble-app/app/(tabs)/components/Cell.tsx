@@ -43,10 +43,11 @@ export default function Cell({
   if (isInWord) {
     if (direction === "horizontal") {
       borderStyle = {
-        borderTopWidth: 2,
-        borderBottomWidth: 2,
-        borderLeftWidth: isFirst ? 2 : 0,
-        borderRightWidth: isLast ? 2 : 0,
+        borderTopWidth: 5,
+        borderBottomWidth: 5,
+        borderLeftWidth: isFirst ? 5 : 0,
+        borderRightWidth: isLast ? 5 : 0,
+        borderRadius: 2,
         borderColor,
       };
     } else {
@@ -55,6 +56,7 @@ export default function Cell({
         borderRightWidth: 5,
         borderTopWidth: isFirst ? 5 : 0,
         borderBottomWidth: isLast ? 5 : 0,
+        borderRadius: 8,
         borderColor,
       };
     }
@@ -79,17 +81,17 @@ export default function Cell({
 
 const styles = StyleSheet.create({
   cell: {
-    width: 22,
-    height: 22,
+    width: 25,
+    height: 25,
     borderWidth: 1,
+    borderRadius: 2,
     justifyContent: "center",
     alignItems: "center",
   },
   letter: {
-    fontSize: 12,
+    fontSize: 14,
     fontWeight: 'bold',
   },
-
   value: {
     position: 'absolute',
     bottom: 1,
