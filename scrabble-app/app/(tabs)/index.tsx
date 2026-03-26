@@ -446,10 +446,10 @@ export default function HomeScreen() {
         )
       );
 
-      if (!results.every((r) => r.valid)) {
-        alert("Invalid word");
-        return;
-      }
+      // if (!results.every((r) => r.valid)) {
+      //   alert("Invalid word");
+      //   return;
+      // }
 
       const totalScore = allWords.reduce(
         (sum, w) => sum + scoreWordWithMultipliers(w.tiles, board, placedTiles),
@@ -461,7 +461,7 @@ export default function HomeScreen() {
       refillRack();
       setPlacedTiles([]);
 
-      alert(`+${totalScore}`);
+      // alert(`+${totalScore}`);
     } catch (err) {
       console.error(err);
       alert("Network error");
@@ -489,7 +489,7 @@ export default function HomeScreen() {
         </Text>
       )}
       <View style={styles.buttonsContainer}>
-        <View style={styles.filledButton}>
+        <View style={[styles.filledButton, { backgroundColor: isValidMove ? "#ae00b4" : "#aba3a3" }]}>
           <Button title="Submit Word" onPress={submitWord} color={"#FFF"} />
         </View>
         <View style={styles.button}>
@@ -519,7 +519,6 @@ const styles = StyleSheet.create({
     color: "white",
   },
   filledButton: {
-    backgroundColor: "#ae00b4",
     borderRadius: 24,
     paddingHorizontal: 10,
   },
