@@ -10,13 +10,6 @@ import { useEffect } from "react";
 const BOARD_SIZE = 15;
 const LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
-// Alerts
-// place letter over letters
-// multiplayer
-// fix UI
-// At least 2 letters need ot be placed
-// multiple way words
-
 type WordTile = {
   row: number;
   col: number;
@@ -232,7 +225,8 @@ export default function HomeScreen() {
   };
 
   const checkMoveValidity = async () => {
-    if (placedTiles.length === 0) {
+
+    if (placedTiles.length === 0 || placedTiles.length ===1) {
       setIsValidMove(false);
       return;
     }
@@ -489,14 +483,14 @@ export default function HomeScreen() {
         </Text>
       )}
       <View style={styles.buttonsContainer}>
-        <View style={[styles.filledButton, { backgroundColor: isValidMove ? "#ae00b4" : "#aba3a3" }]}>
+        <View style={[styles.filledButton, { backgroundColor: isValidMove ? "#3e0059" : "#aba3a3" }]}>
           <Button title="Submit Word" onPress={submitWord} color={"#FFF"} />
         </View>
         <View style={styles.button}>
-          <Button title="Undo" onPress={undoLastTile} color={"#ae00b4"} />
+          <Button title="Undo" onPress={undoLastTile} color={"#3e0059"} />
         </View>
         <View style={styles.button}>
-          <Button title="Clear" onPress={clearTurn} color={"#ae00b4"} />
+          <Button title="Clear" onPress={clearTurn} color={"#3e0059"} />
         </View>
       </View>
     </View>
@@ -514,7 +508,7 @@ const styles = StyleSheet.create({
   score: { textAlign: "center", fontSize: 18, fontWeight: "bold" },
   button: {
     borderWidth: 1,
-    borderColor: "#ae00b4",
+    borderColor: "#3e0059",
     borderRadius: 24,
     color: "white",
   },
